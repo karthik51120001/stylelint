@@ -1,0 +1,56 @@
+name: Stylelint
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - new-master
+
+jobs:
+  stylelint:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 7
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v3
+        id: cache-dependency
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-cache-
+
+      - name: Install dependencies
+        if: steps.cache-dependency.outputs.cache-hit != 'true'
+        run: node build/github.action.install.js
+
+      - uses: actions/checkout@v4 # Checkout your code from the PR
+      - name: Use Node.js 16
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16 # Adjust if needed for your project
+      - name: Install dependencies
+        run: npm install # Install project dependencies
+
+      - name: Run Stylelint on changed files
+        uses: reviewdog/action-stylelint@v1 # Use the reviewdog/action-stylelint action
+        with:
+          skip_annotations: true
+          file_extensions: |
+            **/*.ccc
