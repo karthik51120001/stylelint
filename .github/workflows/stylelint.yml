@@ -40,16 +40,16 @@ jobs:
         if: steps.cache-dependency.outputs.cache-hit != 'true'
         run: node build/github.action.install.js
 
-      - uses: actions/checkout@v4 # Checkout your code from the PR
+      - uses: actions/checkout@v4
       - name: Use Node.js 16
         uses: actions/setup-node@v4
         with:
-          node-version: 16 # Adjust if needed for your project
+          node-version: 16
       - name: Install dependencies
-        run: npm install # Install project dependencies
+        run: npm install
 
       - name: Run Stylelint on changed files
-        uses: reviewdog/action-stylelint@v1 # Use the reviewdog/action-stylelint action
+        uses: reviewdog/action-stylelint@v1
         with:
           skip_annotations: true
           file_extensions: |
