@@ -36,17 +36,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-cache-
 
-      - name: Install dependencies
-        if: steps.cache-dependency.outputs.cache-hit != 'true'
-        run: node build/github.action.install.js
-
-      - uses: actions/checkout@v4
       - name: Use Node.js 16
         uses: actions/setup-node@v4
         with:
           node-version: 16
+
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run Stylelint on changed files
         uses: reviewdog/action-stylelint@v1
